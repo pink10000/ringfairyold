@@ -1,0 +1,200 @@
+[
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/thesis/",
+    "title": "Master’s Thesis: The Time is Right: Retrofitting Formal Verification onto Timers in an Operating System",
+    "description": "Operating systems need timers to function correctly. Despite their critical nature, timers are notoriously difficult to test for correctness. This thesis formally verifies the correctness of a timer virtualization layer in an embedded operating system. We prove that all timers are scheduled correctly, and every callback fires according to the OS specification. We introduce a framework to model timers and present an experience report on the state of retrofitted formal verification.",
+    "tags": ["research"],
+    "timestamp": 1778457600000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/satellite/",
+    "title": "Physics of Satellite Internet From First Principles",
+    "description": "Beaming bits to space and back sounds like sci-fi, but it's real. Let's learn why it's possible.",
+    "tags": ["networking"],
+    "timestamp": 1750896000000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/binary-room/",
+    "title": "*Binary Room*: Implementation of a RISC-V to ARM Translator",
+    "description": "This report outlines how we implemented static binary translation from RISC-V to ARM binaries.",
+    "tags": ["research"],
+    "timestamp": 1744675200000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/process-loading/",
+    "title": "Linux Spelunking: How are processes loaded?",
+    "description": "In this post, we will demystify how Linux loads processes and discover how Linux works on a journey that reminds me of the joys of computers and discovery.",
+    "tags": ["research", "recommended read"],
+    "timestamp": 1744502400000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/tabula-rasa/",
+    "title": "*Tabula Rasa*: Starting Safe Stays Safe",
+    "description": "I’m ecstatic to share that we won best paper at The 3rd Workshop on Security and Privacy in Connected Embedded Systems (SPICES 2024). My collaborators and I studied the security of embedded operating systems and their usage in the wild.",
+    "tags": ["research"],
+    "timestamp": 1739836800000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/linux-pronouns/",
+    "title": "Pronoun usage in the Linux Kernel",
+    "description": "How are pronouns used in the Linux kernel? I analyzed the distribution of pronouns in the 6.13 Linux kernel source. Unsurprisingly, I find that male pronouns are common, but this makes female pronouns all the more unusual.",
+    "tags": [],
+    "timestamp": 1739750400000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/fork",
+    "title": "Bug snack: `fork`s upon `fork`s",
+    "description": "I wouldn’t eat a cockroach. But this bug snack is quite delectable. This “bug” is a fun little puzzle to solve. I think this is an interesting question to discriminate OS programming experience across a wide range of skill levels.",
+    "tags": ["bug snack"],
+    "timestamp": 1728604800000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/100-movies/",
+    "title": "100 Best Movies",
+    "description": "100 movies I recommend. I make no attempt to rank or find the “best”; these are simply what I subjectively found memorable.",
+    "tags": [],
+    "timestamp": 1728172800000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/safe-firmware/",
+    "title": "Compile time techniques for safer firmware",
+    "description": "Provable Security in Embedded Systems: Verification Work in Tock OS",
+    "tags": ["talk", "research", "recommended read"],
+    "timestamp": 1725321600000
+  },
+  {
+    "blog_title": "Samir Rashid",
+    "blog_url": "https://godsped.com/",
+    "url": "https://godsped.com/10-reasons",
+    "title": "10 reasons I chose to join Triton UAS",
+    "description": "",
+    "tags": ["undergrad"],
+    "timestamp": 1714780800000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/brevity/",
+    "title": "beauty in brevity",
+    "description": "I want to make my blog posts shorter.",
+    "tags": ["thoughts", "meta"],
+    "timestamp": 1778655600000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/ucsd-study-spaces/",
+    "title": "list of UCSD study spaces",
+    "description": "Geisel sucks, and there's so many other places to study on campus. I graduated so I no longer need to gatekeep these.",
+    "tags": ["school", "ucsd"],
+    "timestamp": 1775113200000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/claude/",
+    "title": "ten steps behind Claude",
+    "description": "I don't really want to rely on Claude Code.",
+    "tags": ["programming", "ai"],
+    "timestamp": 1772265600000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/microplastics/",
+    "title": "microplastics are not harmful",
+    "description": "Todo: update date",
+    "tags": ["conspiracy"],
+    "timestamp": 1761202800000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/squash/",
+    "title": "merge commits better than squash commits",
+    "description": "todo: update date when written out",
+    "tags": [],
+    "timestamp": 1761202800000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/slop/",
+    "title": "art need not worry",
+    "description": "Wondering how AI-generated media could affect creative expression.",
+    "tags": ["thoughts", "ai"],
+    "timestamp": 1759561200000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/react/",
+    "title": "React is fine",
+    "description": "Todo",
+    "tags": ["programming", "html5"],
+    "timestamp": 1758006000000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/colored-functions/",
+    "title": "thinking about colored functions",
+    "description": "Brainstorming solutions to colored functions.",
+    "tags": ["programming"],
+    "timestamp": 1753513200000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/sdctf24/",
+    "title": "SDCTF 2024",
+    "description": "The challenges I contributed to UCSD's CTF.",
+    "tags": ["programming", "ctf", "ucsd"],
+    "timestamp": 1715670000000
+  },
+  {
+    "blog_title": "longer-tweets",
+    "blog_url": "https://sheeptester.github.io/longer-tweets/",
+    "url": "https://sheeptester.github.io/longer-tweets/vertex-buffer-not-big-enough/",
+    "title": "Vertex buffer is not big enough on Mac only",
+    "description": "A weird bug that only occurred on Mac computers.",
+    "tags": ["programming", "bug"],
+    "timestamp": 1713423600000
+  },
+  {
+    "blog_title": "Blog on Anthony Tarbinian",
+    "blog_url": "https://example.org/blog/",
+    "url": "https://example.org/blog/post-1/",
+    "title": "Welcome!",
+    "description": null,
+    "tags": [],
+    "timestamp": 1741363200000
+  },
+  {
+    "blog_title": "molly computer blog",
+    "blog_url": "https://macla.ren/blog/",
+    "url": "https://macla.ren/blog/posts/block-ctf-2024/",
+    "title": "BlockCTF 2024 writeup",
+    "description": "rev writeup from a ctf hosted by square:tm:",
+    "tags": [],
+    "timestamp": 1731694805000
+  }
+]

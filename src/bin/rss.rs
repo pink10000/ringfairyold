@@ -1,16 +1,19 @@
-use std::{error::Error, fs::File};
+use std::{error::Error, fs::File, io::stdout};
 
 use feed_rs::{model::Link, parser};
 use ringfairy::website::Website;
+use serde::Serialize;
+use serde_json::to_writer;
 
-#[derive(Debug)]
+use crate::discord::Message;
+
+#[derive(Debug, Serialize)]
 struct Post {
     blog_title: Option<String>,
     blog_url: Option<String>,
     url: String,
     title: String,
     description: Option<String>,
-    image_url: Option<String>,
     tags: Vec<String>,
     timestamp: i64,
 }
@@ -60,19 +63,18 @@ fn main() -> Result<(), Box<dyn Error>> {
                         .as_ref()
                         .map(|summary| summary.content.clone())
                         .filter(|desc| desc.len() <= 500),
-                    image_url: todo!(),
                     tags: entry
                         .categories
                         .iter()
                         .map(|category| category.term.clone())
                         .collect(),
-                    timestamp: todo!(),
+                    timestamp: entry.published.or(entry.updated)?.timestamp_millis(),
                 })
             })
         })
         .collect::<Vec<_>>();
 
-    println!("{feeds:#?}");
+    to_writer(stdout(), &posts)?;
 
     Ok(())
 }
@@ -93,32 +95,36 @@ mod discord {
     use serde::Serialize;
 
     #[derive(Serialize, Debug)]
-    struct Message {
-        username: Option<String>,
-        avatar_url: Option<String>,
-        content: Option<String>,
-        embeds: Vec<Embed>,
+    pub struct Message {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub username: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub avatar_url: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub content: Option<String>,
+        pub embeds: Vec<Embed>,
     }
 
     #[derive(Serialize, Debug)]
-    struct Embed {
-        title: Option<String>,
-        description: Option<String>,
-        url: Option<String>,
-        timestamp: Option<String>,
-        color: Option<u16>,
-        image: Option<Image>,
-        author: Option<Author>,
+    pub struct Embed {
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub title: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub description: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub url: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub timestamp: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub color: Option<u16>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub author: Option<Author>,
     }
 
     #[derive(Serialize, Debug)]
-    struct Image {
-        url: String,
-    }
-
-    #[derive(Serialize, Debug)]
-    struct Author {
-        name: String,
-        url: Option<String>,
+    pub struct Author {
+        pub name: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub url: Option<String>,
     }
 }
