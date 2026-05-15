@@ -1,0 +1,35 @@
+name: Check RSS & Atom feeds
+
+on:
+  schedule:
+    # every day at 04:17 PT
+    - cron: 17 4 * * *
+      timezone: America/Los_Angeles
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build ringfairy
+        run: cargo build --release
+
+      - name: Generate Static Files
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          LAST_RUN=$(gh run list --workflow deploy.yml --status success --limit 1 --json startedAt | jq -r '.[0].startedAt')
+          ./target/debug/rss $LAST_RUN

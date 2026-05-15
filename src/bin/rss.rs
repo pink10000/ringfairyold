@@ -1,11 +1,14 @@
-use std::{env, error::Error, fs::File, io::stdout};
+use std::{
+    env::{self, args},
+    error::Error,
+    fs::File,
+};
 
 use chrono::{DateTime, Utc};
 use feed_rs::{model::Link, parser};
 use itertools::Itertools;
 use ringfairy::website::Website;
 use serde::Serialize;
-use serde_json::to_writer;
 
 use crate::discord::{Author, Embed, Message};
 
@@ -21,13 +24,29 @@ struct Post {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let discord_webhook_url = env::var("DISCORD_WEBHOOK")?;
+    let discord_webhook_url = env::var("DISCORD_WEBHOOK")
+        .map_err(|err| format!("environment variable DISCORD_WEBHOOK is missing: {err:?}"))?;
     if discord_webhook_url.is_empty() {
-        Err("environment variable DISCORD_WEBHOOK must be set")?;
+        Err("environment variable DISCORD_WEBHOOK must be nonempty")?;
     }
     if !discord_webhook_url.starts_with("http") {
         Err("DISCORD_WEBHOOK must be a URL")?;
     }
+
+    let start_time = {
+        let mut args = args();
+        let executable_name = args.next();
+        DateTime::parse_from_rfc3339(&args.next().ok_or_else(|| {
+            format!(
+                "usage: {} <start_time>",
+                executable_name
+                    .as_ref()
+                    .map(String::as_ref)
+                    .unwrap_or("rss")
+            )
+        })?)
+        .map_err(|err| format!("failed to parse_from_rfc3339: {err:?}"))?
+    };
 
     let client = reqwest::blocking::Client::new();
 
@@ -86,6 +105,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 })
             })
         })
+        .filter(|post| post.timestamp >= start_time)
         .collect_vec();
     posts.sort_by_key(|post| post.timestamp);
 
