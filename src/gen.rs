@@ -27,6 +27,7 @@ pub async fn make_ringfairy_go_now(settings: &AppSettings) -> Result<(), Error> 
 }
 
 /// Generic page generator
+#[allow(async_fn_in_trait)]
 pub trait Generator: Send + Sync {
     async fn new(template_path: PathBuf, skip_minify: bool) -> Result<Self, Error>
     where

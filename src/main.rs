@@ -1,9 +1,4 @@
-mod cli;
-mod error;
-mod file;
-mod gen;
-mod http;
-mod website;
+use ringfairy::{cli, error, r#gen};
 
 #[tokio::main]
 async fn main() -> Result<(), error::Error> {
