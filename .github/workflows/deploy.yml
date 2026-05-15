@@ -21,20 +21,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Ringfairy Binary
-        run: |
-          curl -L -o ringfairy.tar.gz https://github.com/k3rs3d/ringfairy/releases/download/v0.2.1-alpha/ringfairy-linux.tar.gz
-          tar -xzf ringfairy.tar.gz
-          chmod +x ringfairy
-          sudo mv ringfairy /usr/local/bin/
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build ringfairy
+        run: cargo build --release
 
       - name: Generate Static Files
-        run: ringfairy
+        run: ./target/release/ringfairy
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './webring'
+          path: "./webring"
 
       - name: Deploy to GitHub Pages
         id: deployment
