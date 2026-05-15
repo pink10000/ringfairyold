@@ -1,11 +1,12 @@
 use std::{error::Error, fs::File, io::stdout};
 
+use chrono::{DateTime, Utc};
 use feed_rs::{model::Link, parser};
 use ringfairy::website::Website;
 use serde::Serialize;
 use serde_json::to_writer;
 
-use crate::discord::Message;
+use crate::discord::{Author, Embed, Message};
 
 #[derive(Debug, Serialize)]
 struct Post {
@@ -15,7 +16,7 @@ struct Post {
     title: String,
     description: Option<String>,
     tags: Vec<String>,
-    timestamp: i64,
+    timestamp: DateTime<Utc>,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -49,7 +50,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         })
         .collect::<Vec<_>>();
 
-    let posts = feeds
+    let mut posts = feeds
         .iter()
         .flat_map(|blog| {
             blog.entries.iter().filter_map(|entry| {
@@ -68,13 +69,31 @@ fn main() -> Result<(), Box<dyn Error>> {
                         .iter()
                         .map(|category| category.term.clone())
                         .collect(),
-                    timestamp: entry.published.or(entry.updated)?.timestamp_millis(),
+                    timestamp: entry.published.or(entry.updated)?,
                 })
             })
         })
         .collect::<Vec<_>>();
+    posts.sort_by_key(|post| post.timestamp);
 
-    to_writer(stdout(), &posts)?;
+    for embed_group in posts
+        .into_iter()
+        .map(|post| Embed {
+            title: Some(post.title),
+            description: post.description,
+            url: Some(post.url),
+            timestamp: Some(post.timestamp.to_rfc3339()),
+            color: Some(0x123456),
+            author: post.blog_title.map(|title| Author {
+                name: title,
+                url: post.blog_url,
+            }),
+        })
+        .collect::<Vec<_>>()
+        .chunks(10)
+    {
+        to_writer(stdout(), &create_message(embed_group.to_vec()))?;
+    }
 
     Ok(())
 }
@@ -89,6 +108,15 @@ fn get_url(links: &[Link]) -> Option<String> {
                 .is_some_and(|media_type| media_type != "text/html")
         })
         .map(|link| link.href.clone())
+}
+
+fn create_message(embeds: Vec<Embed>) -> Message {
+    Message {
+        username: None,
+        avatar_url: None,
+        content: None,
+        embeds,
+    }
 }
 
 mod discord {
@@ -116,7 +144,7 @@ mod discord {
         #[serde(skip_serializing_if = "Option::is_none")]
         pub timestamp: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
-        pub color: Option<u16>,
+        pub color: Option<u32>,
         #[serde(skip_serializing_if = "Option::is_none")]
         pub author: Option<Author>,
     }
