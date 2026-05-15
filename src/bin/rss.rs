@@ -1,7 +1,8 @@
-use std::{error::Error, fs::File, io::stdout};
+use std::{env, error::Error, fs::File, io::stdout};
 
 use chrono::{DateTime, Utc};
 use feed_rs::{model::Link, parser};
+use itertools::Itertools;
 use ringfairy::website::Website;
 use serde::Serialize;
 use serde_json::to_writer;
@@ -20,6 +21,16 @@ struct Post {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let discord_webhook_url = env::var("DISCORD_WEBHOOK")?;
+    if discord_webhook_url.is_empty() {
+        Err("environment variable DISCORD_WEBHOOK must be set")?;
+    }
+    if !discord_webhook_url.starts_with("http") {
+        Err("DISCORD_WEBHOOK must be a URL")?;
+    }
+
+    let client = reqwest::blocking::Client::new();
+
     let websites: Vec<Website> = serde_json::from_reader(File::open("websites.json")?)?;
     let feeds = websites
         .iter()
@@ -31,7 +42,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .unwrap_or("(no name)");
             let feed_url = website.atom.as_ref().or(website.rss.as_ref())?;
             parser::parse(
-                reqwest::blocking::get(feed_url)
+                client
+                    .get(feed_url)
+                    .send()
                     .map_err(|err| {
                         eprintln!(
                             "Failed to fetch {}'s feed ({}): {:?}",
@@ -48,7 +61,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             })
             .ok()
         })
-        .collect::<Vec<_>>();
+        .collect_vec();
 
     let mut posts = feeds
         .iter()
@@ -73,10 +86,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 })
             })
         })
-        .collect::<Vec<_>>();
+        .collect_vec();
     posts.sort_by_key(|post| post.timestamp);
 
-    for embed_group in posts
+    for embed_group in &posts
         .into_iter()
         .map(|post| Embed {
             title: Some(post.title),
@@ -89,10 +102,12 @@ fn main() -> Result<(), Box<dyn Error>> {
                 url: post.blog_url,
             }),
         })
-        .collect::<Vec<_>>()
         .chunks(10)
     {
-        to_writer(stdout(), &create_message(embed_group.to_vec()))?;
+        client
+            .post(&discord_webhook_url)
+            .json(&create_message(embed_group.collect()))
+            .send()?;
     }
 
     Ok(())
