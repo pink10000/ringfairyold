@@ -16,9 +16,6 @@
 # Debug files
 log.txt
 
-# Conversation files
-*.txt
-
 # Node modules and TypeScript output
 node_modules/
 oxocarbon/*.js

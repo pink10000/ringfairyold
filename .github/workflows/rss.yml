@@ -17,9 +17,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up git author
-        run: git config user.name joe
-
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -45,6 +42,7 @@ jobs:
       - name: Save URLs
         if: ${{ steps.rss.outputs.new-posts == 'yes' }}
         run: |
+          git config user.name joe
           git add urls.txt
           git commit -m "new blocks"
           git push
