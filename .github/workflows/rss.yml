@@ -24,7 +24,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Build ringfairy
-        run: cargo build
+        run: cargo build --release
 
       - name: Check RSS feeds
         id: rss
@@ -32,7 +32,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
           URLS_OLD=$(cat urls.txt || echo)
-          if ./target/debug/rss "$URLS_OLD" >> urls.txt
+          if ./target/release/rss "$URLS_OLD" >> urls.txt
           then
             echo "new-posts=yes" >> "$GITHUB_OUTPUT"
           else
