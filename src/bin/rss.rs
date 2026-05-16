@@ -112,7 +112,7 @@ fn main() -> Result<ExitCode, Box<dyn Error>> {
         .collect_vec();
     posts.sort_by_key(|post| post.timestamp);
 
-    let has_new_posts = posts.is_empty();
+    let has_new_posts = !posts.is_empty();
     for post in &posts {
         println!("{}", post.url);
     }
@@ -141,11 +141,13 @@ fn main() -> Result<ExitCode, Box<dyn Error>> {
             .error_for_status()?;
     }
 
-    Ok(if has_new_posts {
+    let exit_code = if has_new_posts {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE
-    })
+    };
+    eprintln!("{exit_code:?}");
+    Ok(exit_code)
 }
 
 fn get_url(links: &[Link]) -> Option<String> {
