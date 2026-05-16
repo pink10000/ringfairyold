@@ -8,15 +8,37 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  actions: read
+  contents: write
+
+env:
+  BRANCH_NAME: rss_test_branch_1
 
 jobs:
-  build-and-deploy:
+  run-rss:
     runs-on: ubuntu-latest
     steps:
+      - name: Ensure branch exists
+        id: branch-exists
+        run: |
+          if gh api repos/${{ github.repository }}/branches/${{ env.BRANCH_NAME }} -X HEAD
+          then
+            echo "exists=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=no" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ case(steps.branch-exists.outputs.exists == 'yes', env.BRANCH_NAME, 'main') }}
+
+      - name: Set up branch
+        if: ${{ steps.branch-exists.outputs.exists == 'no' }}
+        run: |
+          git checkout --orphan ${{ env.BRANCH_NAME }}
+          touch urls
+          git add urls
+          git commit -m "set up rss branch"
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -27,9 +49,22 @@ jobs:
       - name: Build ringfairy
         run: cargo build --release
 
-      - name: Generate Static Files
+      - name: Check RSS feeds
+        id: rss
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          LAST_RUN=$(gh run list --workflow deploy.yml --status success --limit 1 --json startedAt | jq -r '.[0].startedAt')
-          ./target/debug/rss $LAST_RUN
+          URLS_OLD=$(cat urls)
+          if ./target/release/rss "$URLS_OLD" >> urls
+          then
+            echo "new-posts=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "new-posts=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Save URLs
+        if: ${{ steps.rss.outputs.new-posts }}
+        run: |
+          git add urls
+          git commit -m "new blocks"
+          git push origin ${{ env.BRANCH_NAME }}

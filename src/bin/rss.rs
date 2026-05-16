@@ -1,7 +1,9 @@
 use std::{
+    collections::HashSet,
     env::{self, args},
     error::Error,
     fs::File,
+    process::ExitCode,
 };
 
 use chrono::{DateTime, Utc};
@@ -23,7 +25,7 @@ struct Post {
     timestamp: DateTime<Utc>,
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<ExitCode, Box<dyn Error>> {
     let discord_webhook_url = env::var("DISCORD_WEBHOOK")
         .map_err(|err| format!("environment variable DISCORD_WEBHOOK is missing: {err:?}"))?;
     if discord_webhook_url.is_empty() {
@@ -33,20 +35,20 @@ fn main() -> Result<(), Box<dyn Error>> {
         Err("DISCORD_WEBHOOK must be a URL")?;
     }
 
-    let start_time = {
+    let seen_urls_str = {
         let mut args = args();
         let executable_name = args.next();
-        DateTime::parse_from_rfc3339(&args.next().ok_or_else(|| {
+        args.next().ok_or_else(|| {
             format!(
-                "usage: {} <start_time>",
+                "usage: {} <urls>\n<urls> may be an empty string",
                 executable_name
                     .as_ref()
                     .map(String::as_ref)
                     .unwrap_or("rss")
             )
-        })?)
-        .map_err(|err| format!("failed to parse_from_rfc3339: {err:?}"))?
+        })?
     };
+    let seen_urls = seen_urls_str.lines().collect::<HashSet<_>>();
 
     let client = reqwest::blocking::Client::new();
 
@@ -60,6 +62,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .map(|s| s.as_str())
                 .unwrap_or("(no name)");
             let feed_url = website.atom.as_ref().or(website.rss.as_ref())?;
+            eprintln!("Fetching {feed_url}");
             parser::parse(
                 client
                     .get(feed_url)
@@ -105,9 +108,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                 })
             })
         })
-        .filter(|post| post.timestamp >= start_time)
+        .filter(|post| !seen_urls.contains(post.url.as_str()))
         .collect_vec();
     posts.sort_by_key(|post| post.timestamp);
+
+    let has_new_posts = posts.is_empty();
+    for post in &posts {
+        println!("{}", post.url);
+    }
 
     for embed_group in &posts
         .into_iter()
@@ -116,7 +124,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             description: post.description,
             url: Some(post.url),
             timestamp: Some(post.timestamp.to_rfc3339()),
-            color: Some(0x123456),
+            color: Some(0xee5396),
             author: post.blog_title.map(|title| Author {
                 name: title,
                 url: post.blog_url,
@@ -124,13 +132,20 @@ fn main() -> Result<(), Box<dyn Error>> {
         })
         .chunks(10)
     {
+        let embeds = embed_group.collect_vec();
+        eprintln!("Sending {} post(s) to Discord webhook", embeds.len());
         client
             .post(&discord_webhook_url)
-            .json(&create_message(embed_group.collect()))
-            .send()?;
+            .json(&create_message(embeds))
+            .send()?
+            .error_for_status()?;
     }
 
-    Ok(())
+    Ok(if has_new_posts {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    })
 }
 
 fn get_url(links: &[Link]) -> Option<String> {
