@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 env:
-  BRANCH_NAME: rss_test_branch_2
+  BRANCH_NAME: rss_test_branch_3
 
 jobs:
   run-rss:
@@ -40,7 +40,8 @@ jobs:
       - name: Set up branch
         if: ${{ steps.branch-check.outputs.exists == 'no' }}
         run: |
-          git checkout --orphan ${{ env.BRANCH_NAME }}
+          # checkout stages main's files, and switch doesn't
+          git switch --orphan ${{ env.BRANCH_NAME }}
           touch urls
           git add urls
           git commit -m "set up rss branch"
@@ -68,7 +69,7 @@ jobs:
           fi
 
       - name: Save URLs
-        if: ${{ steps.rss.outputs.new-posts }}
+        if: ${{ steps.rss.outputs.new-posts == 'yes' }}
         run: |
           git add urls
           git commit -m "new blocks"
