@@ -44,5 +44,5 @@ jobs:
         run: |
           git config user.name joe
           git add urls.txt
-          git commit -m "new blocks"
+          git commit -m "new blog posts"
           git push
