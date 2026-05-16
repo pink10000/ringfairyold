@@ -17,8 +17,8 @@ jobs:
   run-rss:
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure branch exists
-        id: branch-exists
+      - name: Check if branch exists
+        id: branch-check
         run: |
           if gh api repos/${{ github.repository }}/branches/${{ env.BRANCH_NAME }} -X HEAD
           then
@@ -30,10 +30,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ case(steps.branch-exists.outputs.exists == 'yes', env.BRANCH_NAME, 'main') }}
+          ref: ${{ case(steps.branch-check.outputs.exists == 'yes', env.BRANCH_NAME, 'main') }}
+
+      - name: Set up git author
+        run: git config user.name joe
 
       - name: Set up branch
-        if: ${{ steps.branch-exists.outputs.exists == 'no' }}
+        if: ${{ steps.branch-check.outputs.exists == 'no' }}
         run: |
           git checkout --orphan ${{ env.BRANCH_NAME }}
           touch urls
