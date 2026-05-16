@@ -4,15 +4,11 @@ https://sheeptester.github.io/longer-tweets/sdctf24/
 https://godsped.com/safe-firmware/
 https://godsped.com/100-movies/
 https://godsped.com/fork
-https://macla.ren/blog/posts/block-ctf-2024/
 https://godsped.com/linux-pronouns/
 https://godsped.com/tabula-rasa/
-https://example.org/blog/post-1/
-https://godsped.com/process-loading/
 https://godsped.com/binary-room/
 https://godsped.com/satellite/
 https://sheeptester.github.io/longer-tweets/colored-functions/
-https://sheeptester.github.io/longer-tweets/react/
 https://sheeptester.github.io/longer-tweets/slop/
 https://sheeptester.github.io/longer-tweets/microplastics/
 https://sheeptester.github.io/longer-tweets/squash/
