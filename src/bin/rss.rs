@@ -104,8 +104,7 @@ fn main() -> Result<ExitCode, Box<dyn Error>> {
                         .media
                         .iter()
                         .flat_map(|media| media.content.iter())
-                        .filter_map(|content| content.url.as_ref().map(|url| url.as_str()))
-                        .next()
+                        .find_map(|content| content.url.as_ref().map(|url| url.as_str()))
                         .map(String::from),
                     tags: entry
                         .categories
