@@ -12,7 +12,7 @@ use itertools::Itertools;
 use ringfairy::website::Website;
 use serde::Serialize;
 
-use crate::discord::{Author, Embed, Message};
+use crate::discord::{Author, Embed, Image, Message};
 
 #[derive(Debug, Serialize)]
 struct Post {
@@ -21,6 +21,7 @@ struct Post {
     url: String,
     title: String,
     description: Option<String>,
+    image_url: Option<String>,
     tags: Vec<String>,
     timestamp: DateTime<Utc>,
 }
@@ -99,6 +100,13 @@ fn main() -> Result<ExitCode, Box<dyn Error>> {
                         .as_ref()
                         .map(|summary| summary.content.clone())
                         .filter(|desc| desc.len() <= 500),
+                    image_url: entry
+                        .media
+                        .iter()
+                        .flat_map(|media| media.content.iter())
+                        .filter_map(|content| content.url.as_ref().map(|url| url.as_str()))
+                        .next()
+                        .map(String::from),
                     tags: entry
                         .categories
                         .iter()
@@ -125,6 +133,7 @@ fn main() -> Result<ExitCode, Box<dyn Error>> {
             url: Some(post.url),
             timestamp: Some(post.timestamp.to_rfc3339()),
             color: Some(0xee5396),
+            image: post.image_url.map(|url| Image { url }),
             author: post.blog_title.map(|title| Author {
                 name: title,
                 url: post.blog_url,
@@ -198,7 +207,14 @@ mod discord {
         #[serde(skip_serializing_if = "Option::is_none")]
         pub color: Option<u32>,
         #[serde(skip_serializing_if = "Option::is_none")]
+        pub image: Option<Image>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         pub author: Option<Author>,
+    }
+
+    #[derive(Serialize, Debug)]
+    pub struct Image {
+        pub url: String,
     }
 
     #[derive(Serialize, Debug)]
